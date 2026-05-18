@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "926426335748",
+    "project_id": "marksman--ecom",
+    "storage_bucket": "marksman--ecom.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:926426335748:android:5bf3d07f523165c50d0351",
+        "android_client_info": {
+          "package_name": "com.eA"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBXpbqMpJgGGwebV5noBRE0Yby_Ft4xRY8"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
