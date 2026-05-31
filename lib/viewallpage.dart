@@ -1,7 +1,7 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:marksman/shoesgrid.dart';
 
+import 'Shoes.dart';
 import 'Shoes_data.dart';
 import 'cartpage.dart';
 
@@ -13,6 +13,15 @@ class viewallpage extends StatefulWidget {
 }
 
 class _viewallpageState extends State<viewallpage> {
+
+  late Future<List<Shoes>> _shoesFuture;
+
+  @override
+  void initState() {
+    super.initState();
+    _shoesFuture = fetchShoes();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -23,27 +32,26 @@ class _viewallpageState extends State<viewallpage> {
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
             Text('Item Page'),
-
             IconButton(
-              onPressed: (){
-                Navigator.push(context, MaterialPageRoute(
-                  builder: (context) => cartpage(),)
-                );
+              onPressed: () {
+                Navigator.push(context,
+                    MaterialPageRoute(builder: (context) => cartpage()));
               },
               icon: Icon(Icons.shopping_cart),
-
             ),
           ],
         ),
       ),
+
       body: Column(
         children: [
+          // Search bar
           Container(
-            margin: EdgeInsets.symmetric(horizontal:25,vertical: 25),
+            margin: EdgeInsets.symmetric(horizontal: 25, vertical: 25),
             padding: EdgeInsets.all(6),
             decoration: BoxDecoration(
-                color:Colors.grey[100],
-                borderRadius:BorderRadius.circular(25)),
+                color: Colors.grey[100],
+                borderRadius: BorderRadius.circular(25)),
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
@@ -52,33 +60,49 @@ class _viewallpageState extends State<viewallpage> {
               ],
             ),
           ),
+
+          // Shoes grid with FutureBuilder
           Expanded(
-              child:Padding(
-                padding: const EdgeInsets.all(8.0),
-                child: GridView.builder(
-                  itemCount: shoesList.length,
-                  gridDelegate:  SliverGridDelegateWithFixedCrossAxisCount(
-                    crossAxisCount: 2,
-                    // items per row
-                    childAspectRatio: 2 / 3,
-                    // item bblock ratio
-                    crossAxisSpacing: 10,
-                    // Space between columns
-                    mainAxisSpacing: 10,
-                    // Space between rows
+            child: FutureBuilder<List<Shoes>>(
+              future: _shoesFuture,
+              builder: (context, snapshot) {
+
+                // Waiting for API response
+                if (snapshot.connectionState == ConnectionState.waiting) {
+                  return Center(child: CircularProgressIndicator());
+                }
+
+                // API returned an error
+                if (snapshot.hasError) {
+                  return Center(
+                    child: Text('Error loading shoes: ${snapshot.error}'),
+                  );
+                }
+
+                // Data loaded successfully — show full grid
+                final shoes = snapshot.data!;
+                return Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: GridView.builder(
+                    itemCount: shoes.length,
+                    gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                      crossAxisCount: 2,
+                      childAspectRatio: 2 / 3,
+                      crossAxisSpacing: 10,
+                      mainAxisSpacing: 10,
+                    ),
+                    itemBuilder: (context, index) {
+                      return Shoesgrid(shoes: shoes[index]);
+                    },
                   ),
-                  itemBuilder: (context, index) {
-                    return Shoesgrid(
-                      shoes: shoesList[index], // Pass the current shoe object
-                    );
-                  },),
-              ), ),
+                );
+              },
+            ),
+          ),
         ],
       ),
 
-      bottomNavigationBar: BottomAppBar(
-        height: 25,
-      ),
+      bottomNavigationBar: BottomAppBar(height: 25),
     );
   }
 }
