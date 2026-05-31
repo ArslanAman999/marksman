@@ -1,48 +1,27 @@
+import 'dart:convert';
+import 'package:http/http.dart' as http;
 import 'Shoes.dart';
 
-final List shoesList = [
-  //#1
-  Shoes(
-    name: 'Charm Walk Beige',
-    price: 200,
-    imagelocation: 'assets/images/shoepic5.png', // Only the image path
-    description: 'Stylish brown shoes perfect for casual wear.',
-  ),
-  //#2
-  Shoes(
-    name: 'Elegant Black',
-    price: 200,
-    imagelocation: 'assets/images/shoepic2.png', // Only the image path
-    description: 'Elegant black suede shoes, perfect for'
-        ' formal wear.',
-  ),
-  //#3
-  Shoes(
-    name: 'Elegant Brown',
-    price: 250,
-    imagelocation: 'assets/images/shoepic4.png', // Only the image path
-    description: 'Classic Brown shoes for formal occasions.',
-  ),
-  //#4
-  Shoes(
-    name: 'Classic Tan',
-    price: 220,
-    imagelocation: 'assets/images/shoepic3.png', // Only the image path
-    description: 'Classic tan loafers, ideal for formal occasions.',
-  ),
-  //#5
-  Shoes(
-    name: 'chelsea BLACK',
-    price: 250,
-    imagelocation: 'assets/images/shoepic1.png', // Only the image path
-    description: 'Classic black shoes for formal occasions.',
-  ),
-  //#6
-  Shoes(
-    name: 'Air force 1',
-    price: 180,
-    imagelocation: 'assets/images/shoepic6.png', // Only the image path
-    description: 'Iconic white sneakers,for everyday wear.',
-  ),
+// The URL of our local Node.js API
+const String apiUrl = 'http://localhost:3000';
 
-];
+// Fetches all shoes from the API
+// Returns a List of Shoes objects built from the JSON response
+// The 'async' keyword means this runs in the background
+// without freezing the UI while waiting for the response
+Future<List<Shoes>> fetchShoes() async {
+  final response = await http.get(Uri.parse('$apiUrl/shoes'));
+
+  if (response.statusCode == 200) {
+    // Response body is a JSON string like:
+    // [{"id":1,"name":"Charm Walk Beige",...}, {...}, ...]
+    // jsonDecode converts that string into a Dart List
+    final List<dynamic> data = jsonDecode(response.body);
+
+    // Convert each item in the list into a Shoes object
+    // using the fromJson method we just added
+    return data.map((json) => Shoes.fromJson(json)).toList();
+  } else {
+    throw Exception('Failed to load shoes from API');
+  }
+}
