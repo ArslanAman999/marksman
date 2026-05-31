@@ -30,7 +30,26 @@ class _ShoesgridState extends State<Shoesgrid> {
             // image
             Padding(
               padding: const EdgeInsets.all(5.0),
-              child: Image.asset(widget.shoes.imagelocation,),
+             child: widget.shoes.stockQuantity > 0
+    ? Image.asset(widget.shoes.imagelocation)
+    : Stack(
+        alignment: Alignment.center,
+        children: [
+          Image.asset(widget.shoes.imagelocation),
+          Container(
+            color: Colors.black.withOpacity(0.5),
+            padding: EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+            child: Text(
+              'OUT OF STOCK',
+              style: TextStyle(
+                color: Colors.white,
+                fontWeight: FontWeight.bold,
+                fontSize: 12,
+              ),
+            ),
+          ),
+        ],
+      ),
             ),
 
             // description
