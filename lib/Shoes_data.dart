@@ -3,7 +3,8 @@ import 'package:http/http.dart' as http;
 import 'Shoes.dart';
 
 // The URL of our local Node.js API
-const String apiUrl = 'http://localhost:3000';
+//const String apiUrl = 'http://localhost:3000';
+const String apiUrl = 'https://marksman-api.vercel.app';
 
 // Fetches all shoes from the API
 // Returns a List of Shoes objects built from the JSON response
