@@ -37,7 +37,7 @@ class _ShoesgridState extends State<Shoesgrid> {
         children: [
           Image.asset(widget.shoes.imagelocation),
           Container(
-            color: Colors.black.withOpacity(0.5),
+            color: Color.fromRGBO(0, 0, 0, 0.5),
             padding: EdgeInsets.symmetric(horizontal: 8, vertical: 4),
             child: Text(
               'OUT OF STOCK',
