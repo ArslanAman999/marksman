@@ -135,10 +135,9 @@ class _cartpageState extends State<cartpage> {
                                 List.from(cartModel.getCartItems());
 
                                 // Send order to MySQL via API
-                                bool success =
-                                await sendOrderToDatabase(items);
+                                int orderId = await sendOrderToDatabase(items);
 
-                                if (success) {
+                                if (orderId != -1) {
                                   // Clear the cart
                                   setState(() {
                                     cartModel.getCartItems().clear();
@@ -152,16 +151,39 @@ class _cartpageState extends State<cartpage> {
                                             HomePage()),
                                   );
 
-                                  ScaffoldMessenger.of(context)
-                                      .showSnackBar(
+                                  ScaffoldMessenger.of(context).showSnackBar(
                                     SnackBar(
-                                      content: Text(
-                                        'Your order has been placed successfully!',
-                                        style: TextStyle(
-                                            color: Colors.black),
+                                      duration: Duration(seconds: 6),
+                                      backgroundColor: Colors.blue[400],
+                                      content: Row(
+                                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                        children: [
+                                          Text(
+                                            'Order #$orderId placed!',
+                                            style: TextStyle(color: Colors.black),
+                                          ),
+                                          TextButton(
+                                            onPressed: () async {
+                                              bool cancelled = await cancelOrder(orderId);
+                                              if (cancelled) {
+                                                ScaffoldMessenger.of(context).showSnackBar(
+                                                  SnackBar(
+                                                    content: Text('Order #$orderId cancelled'),
+                                                    backgroundColor: Colors.red,
+                                                  ),
+                                                );
+                                              }
+                                            },
+                                            child: Text(
+                                              'CANCEL ORDER',
+                                              style: TextStyle(
+                                                color: Colors.white,
+                                                fontWeight: FontWeight.bold,
+                                              ),
+                                            ),
+                                          ),
+                                        ],
                                       ),
-                                      backgroundColor:
-                                      Colors.blue[400],
                                     ),
                                   );
                                 } else {
