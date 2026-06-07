@@ -1,3 +1,4 @@
+import 'package:flutter/material.dart';
 import 'Shoes.dart';
 
 class CartItem {
@@ -7,23 +8,18 @@ class CartItem {
   CartItem({required this.shoe, this.quantity = 1});
 }
 
-class CartModel {
-  // Stores cart items as a map: shoe id → CartItem
-  // This automatically handles duplicates by incrementing quantity
+class CartModel extends ChangeNotifier {
   final Map<int, CartItem> _cartItems = {};
 
-  // Add shoe to cart
-  // If already exists, increment quantity
   void addToCart(Shoes shoe) {
     if (_cartItems.containsKey(shoe.id)) {
       _cartItems[shoe.id]!.quantity++;
     } else {
       _cartItems[shoe.id] = CartItem(shoe: shoe);
     }
+    notifyListeners();
   }
 
-  // Remove one quantity of a shoe
-  // If quantity reaches 0, remove entirely
   void removeFromCart(Shoes shoe) {
     if (_cartItems.containsKey(shoe.id)) {
       if (_cartItems[shoe.id]!.quantity > 1) {
@@ -32,14 +28,13 @@ class CartModel {
         _cartItems.remove(shoe.id);
       }
     }
+    notifyListeners();
   }
 
-  // Returns list of CartItems for display
   List<CartItem> getCartItems() {
     return _cartItems.values.toList();
   }
 
-  // Total number of individual items (not unique shoes)
   int getItemCount() {
     int total = 0;
     for (var item in _cartItems.values) {
@@ -48,7 +43,6 @@ class CartModel {
     return total;
   }
 
-  // Total price
   int getTotalPrice() {
     int total = 0;
     for (var item in _cartItems.values) {
@@ -59,6 +53,7 @@ class CartModel {
 
   void clearCart() {
     _cartItems.clear();
+    notifyListeners();
   }
 }
 

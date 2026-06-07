@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:marksman/profilepage.dart';
 import 'package:marksman/shoesgrid.dart';
 import 'package:marksman/viewallpage.dart';
+import 'package:marksman/cart_model.dart';
 
 import 'Shoes.dart';
 import 'Shoes_data.dart';
@@ -26,6 +27,19 @@ class _HomePageState extends State<HomePage> {
   void initState() {
     super.initState();
     _shoesFuture = fetchShoes();
+    // Listen for cart changes and rebuild the page
+    // so the badge count updates when items are added
+    cartModel.addListener(_onCartChanged);
+  }
+
+  void _onCartChanged() {
+    setState(() {});
+  }
+
+  @override
+  void dispose() {
+    cartModel.removeListener(_onCartChanged);
+    super.dispose();
   }
 
   @override
@@ -175,7 +189,33 @@ class _HomePageState extends State<HomePage> {
                       MaterialPageRoute(builder: (context) => cartpage()));
                 },
                 iconSize: 32,
-                icon: Icon(Icons.shopping_cart),
+                icon: Stack(
+                  clipBehavior: Clip.none,
+                  children: [
+                    Icon(Icons.shopping_cart),
+                    // Only show badge if cart has items
+                    if (cartModel.getItemCount() > 0)
+                      Positioned(
+                        right: -6,
+                        top: -6,
+                        child: Container(
+                          padding: EdgeInsets.all(4),
+                          decoration: BoxDecoration(
+                            color: Colors.red,
+                            shape: BoxShape.circle,
+                          ),
+                          child: Text(
+                            '${cartModel.getItemCount()}',
+                            style: TextStyle(
+                              color: Colors.white,
+                              fontSize: 10,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                        ),
+                      ),
+                  ],
+                ),
               ),
             ),
           ],

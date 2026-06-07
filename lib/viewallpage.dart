@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:marksman/shoesgrid.dart';
+import 'package:marksman/cart_model.dart';
 
 import 'Shoes.dart';
 import 'Shoes_data.dart';
@@ -20,6 +21,17 @@ class _viewallpageState extends State<viewallpage> {
   void initState() {
     super.initState();
     _shoesFuture = fetchShoes();
+    cartModel.addListener(_onCartChanged);
+  }
+
+  void _onCartChanged() {
+    setState(() {});
+  }
+
+  @override
+  void dispose() {
+    cartModel.removeListener(_onCartChanged);
+    super.dispose();
   }
 
   @override
@@ -37,7 +49,32 @@ class _viewallpageState extends State<viewallpage> {
                 Navigator.push(context,
                     MaterialPageRoute(builder: (context) => cartpage()));
               },
-              icon: Icon(Icons.shopping_cart),
+              icon: Stack(
+                clipBehavior: Clip.none,
+                children: [
+                  Icon(Icons.shopping_cart),
+                  if (cartModel.getItemCount() > 0)
+                    Positioned(
+                      right: -6,
+                      top: -6,
+                      child: Container(
+                        padding: EdgeInsets.all(4),
+                        decoration: BoxDecoration(
+                          color: Colors.red,
+                          shape: BoxShape.circle,
+                        ),
+                        child: Text(
+                          '${cartModel.getItemCount()}',
+                          style: TextStyle(
+                            color: Colors.white,
+                            fontSize: 10,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                      ),
+                    ),
+                ],
+              ),
             ),
           ],
         ),

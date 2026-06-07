@@ -20,12 +20,12 @@ class Shoes {
   // This method maps each JSON field to the correct class property
   factory Shoes.fromJson(Map<String, dynamic> json) {
     return Shoes(
-      id:            json['id'] as int,
-      name:          json['name'] as String,
-      price:         json['price'] as int,
-      imagelocation: 'assets/images/${json['image'] as String}',
-      description:   json['description'] as String,
-      stockQuantity: json['stock_quantity'] as int,
+      id:            int.parse(json['id'].toString()),
+      name:          json['name'].toString(),
+      price:         int.parse(json['price'].toString()),
+      imagelocation: 'assets/images/${json['image']}',
+      description:   json['description'].toString(),
+      stockQuantity: int.parse(json['stock_quantity'].toString()),
     );
   }
 }
