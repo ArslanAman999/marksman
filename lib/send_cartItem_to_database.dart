@@ -2,25 +2,17 @@ import 'dart:convert';
 import 'package:http/http.dart' as http;
 import 'Shoes.dart';
 import 'Shoes_data.dart';
+import 'cart_model.dart';
 
 // Returns order_id if successful, -1 if failed
-Future<int> sendOrderToDatabase(List<Shoes> cartItems) async {
-  Map<int, Map<String, dynamic>> itemMap = {};
-
-  for (Shoes shoe in cartItems) {
-    if (itemMap.containsKey(shoe.id)) {
-      itemMap[shoe.id]!['quantity'] += 1;
-    } else {
-      itemMap[shoe.id] = {
-        'shoe_id':    shoe.id,
-        'name':       shoe.name,
-        'quantity':   1,
-        'unit_price': shoe.price,
-      };
-    }
-  }
-
-  final List<Map<String, dynamic>> items = itemMap.values.toList();
+Future<int> sendOrderToDatabase(List<CartItem> cartItems) async {
+  // CartItem already has quantity grouped, convert directly to API format
+  final List<Map<String, dynamic>> items = cartItems.map((cartItem) => {
+    'shoe_id':    cartItem.shoe.id,
+    'name':       cartItem.shoe.name,
+    'quantity':   cartItem.quantity,
+    'unit_price': cartItem.shoe.price,
+  }).toList();
 
   final Map<String, dynamic> orderData = {
     'user_id': 1,
