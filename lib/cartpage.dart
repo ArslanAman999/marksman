@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:marksman/Home_Page.dart';
 import 'package:marksman/cart_model.dart';
 import 'send_cartItem_to_database.dart';
-import 'Shoes.dart';
 
 class cartpage extends StatefulWidget {
   cartpage({super.key});
@@ -13,17 +12,7 @@ class cartpage extends StatefulWidget {
 
 class _cartpageState extends State<cartpage> {
 
-  // Tracks whether order is currently being sent
-  // Used to show loading spinner on the YES button
   bool _isPlacingOrder = false;
-
-  int calculateTotalPrice() {
-    int total = 0;
-    for (var shoe in cartModel.getCartItems()) {
-      total += shoe.price;
-    }
-    return total;
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -56,9 +45,10 @@ class _cartpageState extends State<cartpage> {
         ),
       )
           : ListView.builder(
-          itemCount: cartModel.getItemCount(),
+        // itemCount is now number of unique shoes not total quantity
+          itemCount: cartModel.getCartItems().length,
           itemBuilder: (context, index) {
-            var shoe = cartModel.getCartItems()[index];
+            var cartItem = cartModel.getCartItems()[index];
             return Padding(
               padding: const EdgeInsets.all(10.0),
               child: Container(
@@ -67,17 +57,21 @@ class _cartpageState extends State<cartpage> {
                     color: Colors.grey[100],
                     borderRadius: BorderRadius.circular(15)),
                 child: ListTile(
-                  leading: Image.asset(shoe.imagelocation),
-                  title: Text(shoe.name),
-                  subtitle: Text('\$${shoe.price}'),
+                  leading: Image.asset(cartItem.shoe.imagelocation),
+                  title: Text(cartItem.shoe.name),
+                  // Shows price x quantity = subtotal
+                  subtitle: Text(
+                    '\$${cartItem.shoe.price} x ${cartItem.quantity}  =  \$${cartItem.shoe.price * cartItem.quantity}',
+                  ),
                   trailing: IconButton(
                     onPressed: () {
                       setState(() {
-                        cartModel.removeFromCart(shoe);
+                        cartModel.removeFromCart(cartItem.shoe);
                       });
                       ScaffoldMessenger.of(context).showSnackBar(
                         SnackBar(
-                          content: Text('${shoe.name} removed from cart'),
+                          content: Text(
+                              '${cartItem.shoe.name} removed from cart'),
                         ),
                       );
                     },
@@ -96,13 +90,14 @@ class _cartpageState extends State<cartpage> {
             Padding(
               padding: EdgeInsets.symmetric(horizontal: 16.0),
               child: Text(
-                'Total: \$${calculateTotalPrice()}',
+                // Uses CartModel's getTotalPrice() instead of manual calc
+                'Total: \$${cartModel.getTotalPrice()}',
                 style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
               ),
             ),
             ElevatedButton(
               onPressed: cartModel.getItemCount() == 0
-                  ? null // Disable button if cart is empty
+                  ? null
                   : () {
                 showDialog(
                   context: context,
@@ -119,8 +114,6 @@ class _cartpageState extends State<cartpage> {
                           child: Text('NO'),
                         ),
                         StatefulBuilder(
-                          // StatefulBuilder lets us update just
-                          // the YES button state inside the dialog
                           builder: (context, setDialogState) {
                             return TextButton(
                               onPressed: _isPlacingOrder
@@ -130,17 +123,18 @@ class _cartpageState extends State<cartpage> {
                                   _isPlacingOrder = true;
                                 });
 
-                                // Get cart items before clearing
-                                List<Shoes> items =
+                                // Get CartItems list
+                                List<CartItem> items =
                                 List.from(cartModel.getCartItems());
 
-                                // Send order to MySQL via API
-                                int orderId = await sendOrderToDatabase(items);
+                                // Send order to API
+                                int orderId =
+                                await sendOrderToDatabase(items);
 
                                 if (orderId != -1) {
-                                  // Clear the cart
+                                  // Clear cart properly
                                   setState(() {
-                                    cartModel.getCartItems().clear();
+                                    cartModel.clearCart();
                                   });
 
                                   Navigator.of(context).pop();
@@ -151,25 +145,38 @@ class _cartpageState extends State<cartpage> {
                                             HomePage()),
                                   );
 
-                                  ScaffoldMessenger.of(context).showSnackBar(
+                                  ScaffoldMessenger.of(context)
+                                      .showSnackBar(
                                     SnackBar(
-                                      duration: Duration(seconds: 6),
-                                      backgroundColor: Colors.blue[400],
+                                      duration:
+                                      Duration(seconds: 6),
+                                      backgroundColor:
+                                      Colors.blue[400],
                                       content: Row(
-                                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                        mainAxisAlignment:
+                                        MainAxisAlignment
+                                            .spaceBetween,
                                         children: [
                                           Text(
                                             'Order #$orderId placed!',
-                                            style: TextStyle(color: Colors.black),
+                                            style: TextStyle(
+                                                color:
+                                                Colors.black),
                                           ),
                                           TextButton(
                                             onPressed: () async {
-                                              bool cancelled = await cancelOrder(orderId);
+                                              bool cancelled =
+                                              await cancelOrder(
+                                                  orderId);
                                               if (cancelled) {
-                                                ScaffoldMessenger.of(context).showSnackBar(
+                                                ScaffoldMessenger
+                                                    .of(context)
+                                                    .showSnackBar(
                                                   SnackBar(
-                                                    content: Text('Order #$orderId cancelled'),
-                                                    backgroundColor: Colors.red,
+                                                    content: Text(
+                                                        'Order #$orderId cancelled'),
+                                                    backgroundColor:
+                                                    Colors.red,
                                                   ),
                                                 );
                                               }
@@ -178,7 +185,8 @@ class _cartpageState extends State<cartpage> {
                                               'CANCEL ORDER',
                                               style: TextStyle(
                                                 color: Colors.white,
-                                                fontWeight: FontWeight.bold,
+                                                fontWeight:
+                                                FontWeight.bold,
                                               ),
                                             ),
                                           ),
@@ -187,7 +195,6 @@ class _cartpageState extends State<cartpage> {
                                     ),
                                   );
                                 } else {
-                                  // Order failed
                                   setDialogState(() {
                                     _isPlacingOrder = false;
                                   });
