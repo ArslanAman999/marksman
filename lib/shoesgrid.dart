@@ -14,7 +14,11 @@ class Shoesgrid extends StatefulWidget {
 class _ShoesgridState extends State<Shoesgrid> {
   @override
   Widget build(BuildContext context) {
-    return Container(
+    return ConstrainedBox(
+      constraints: BoxConstraints(
+        minWidth: 150,
+        maxWidth: 220,
+      ),
       child: Container(
         margin: EdgeInsets.symmetric(horizontal: 12),
         width: 200,
