@@ -145,52 +145,13 @@ class _cartpageState extends State<cartpage> {
                                             HomePage()),
                                   );
 
-                                  ScaffoldMessenger.of(context)
-                                      .showSnackBar(
+                                  ScaffoldMessenger.of(context).showSnackBar(
                                     SnackBar(
-                                      duration:
-                                      Duration(seconds: 6),
-                                      backgroundColor:
-                                      Colors.blue[400],
-                                      content: Row(
-                                        mainAxisAlignment:
-                                        MainAxisAlignment
-                                            .spaceBetween,
-                                        children: [
-                                          Text(
-                                            'Order #$orderId placed!',
-                                            style: TextStyle(
-                                                color:
-                                                Colors.black),
-                                          ),
-                                          TextButton(
-                                            onPressed: () async {
-                                              bool cancelled =
-                                              await cancelOrder(
-                                                  orderId);
-                                              if (cancelled) {
-                                                ScaffoldMessenger
-                                                    .of(context)
-                                                    .showSnackBar(
-                                                  SnackBar(
-                                                    content: Text(
-                                                        'Order #$orderId cancelled'),
-                                                    backgroundColor:
-                                                    Colors.red,
-                                                  ),
-                                                );
-                                              }
-                                            },
-                                            child: Text(
-                                              'CANCEL ORDER',
-                                              style: TextStyle(
-                                                color: Colors.white,
-                                                fontWeight:
-                                                FontWeight.bold,
-                                              ),
-                                            ),
-                                          ),
-                                        ],
+                                      duration: Duration(seconds: 3),
+                                      backgroundColor: Colors.blue[400],
+                                      content: Text(
+                                        'Order placed successfully!',
+                                        style: TextStyle(color: Colors.white),
                                       ),
                                     ),
                                   );
