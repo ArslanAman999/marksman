@@ -68,7 +68,7 @@ class _profilepageState extends State<profilepage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Color(0xFFDBD2E0),
+      backgroundColor: Color(0xFFD9D2E0),
       appBar: AppBar(
         backgroundColor: Color(0xFFDBD2E0),
         title: Row(
@@ -150,11 +150,11 @@ class _profilepageState extends State<profilepage> {
                   margin: EdgeInsets.only(bottom: 12),
                   padding: EdgeInsets.all(16),
                   decoration: BoxDecoration(
-                    color: Colors.grey[100],
+                    color: Colors.grey[200],
                     borderRadius: BorderRadius.circular(12),
                     border: Border.all(
                       color: isPending
-                          ? Colors.orange
+                          ? Colors.black12
                           : Colors.green,
                       width: 1.5,
                     ),
@@ -168,7 +168,7 @@ class _profilepageState extends State<profilepage> {
                         MainAxisAlignment.spaceBetween,
                         children: [
                           Text(
-                            'Order #${order['order_id']}',
+                            'Order placed on ${order['created_at'].toString().substring(0, 10)}',
                             style: TextStyle(
                               fontWeight: FontWeight.bold,
                               fontSize: 16,
@@ -216,13 +216,13 @@ class _profilepageState extends State<profilepage> {
                       SizedBox(height: 4),
 
                       // Date
-                      Text(
-                        'Placed: ${order['created_at'].toString().substring(0, 16)}',
-                        style: TextStyle(
-                          fontSize: 12,
-                          color: Colors.grey,
-                        ),
-                      ),
+                      // Text(
+                      //   'Placed: ${order['created_at'].toString().substring(0, 16)}',
+                      //   style: TextStyle(
+                      //     fontSize: 12,
+                      //     color: Colors.grey,
+                      //   ),
+                      // ),
 
                       // Cancel button — only for pending orders
                       if (isPending)
@@ -236,7 +236,7 @@ class _profilepageState extends State<profilepage> {
                                     order['order_id'].toString()));
                               },
                               style: ElevatedButton.styleFrom(
-                                backgroundColor: Colors.red,
+                                backgroundColor: Colors.red[400],
                                 shape: RoundedRectangleBorder(
                                   borderRadius:
                                   BorderRadius.circular(8),
