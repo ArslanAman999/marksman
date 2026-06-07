@@ -77,18 +77,27 @@ class _ShoesgridState extends State<Shoesgrid> {
                 ),
                 // Add to cart button
                 IconButton(
-                    onPressed: () {
-                      setState(() {
-                        cartModel.addToCart(widget.shoes);
-                      });
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        SnackBar(
-                          content:
-                          Text('${widget.shoes.name} added to cart'),
-                        ),
-                      );
-                    },
-                    icon: Icon(Icons.add_shopping_cart))
+                  // Disable button entirely if out of stock
+                  onPressed: widget.shoes.stockQuantity > 0
+                      ? () {
+                    setState(() {
+                      cartModel.addToCart(widget.shoes);
+                    });
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(
+                        content: Text('${widget.shoes.name} added to cart'),
+                      ),
+                    );
+                  }
+                      : null, // null disables the button
+                  icon: Icon(
+                    Icons.add_shopping_cart,
+                    // Grey out the icon when out of stock
+                    color: widget.shoes.stockQuantity > 0
+                        ? null
+                        : Colors.grey[400],
+                  ),
+                )
               ],
             )
           ],
