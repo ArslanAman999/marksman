@@ -35,8 +35,16 @@ class SizeChartPage extends StatelessWidget {
           child: Column(
             children: [
               //SHOES-ICON
-              Image.asset('assets/images/shoesicon.png',
-              height: 250,),
+              ConstrainedBox(
+                constraints: BoxConstraints(
+                  minHeight: 100,
+                  maxHeight: 200,
+                ),
+                child: Image.asset(
+                  'assets/images/shoesicon.png',
+                  fit: BoxFit.contain,
+                ),
+              ),
 
               const SizedBox(height: 20),
 
@@ -50,7 +58,18 @@ class SizeChartPage extends StatelessWidget {
               //SIZE-CHART
               Padding(
                 padding: const EdgeInsets.all(25.0),
-                child: Image.asset('assets/images/SizeChart.jpg'),
+                child: ConstrainedBox(
+                  constraints: BoxConstraints(
+                    minWidth: 280,   // minimum width on small screens
+                    maxWidth: 600,   // maximum width on large screens
+                    minHeight: 200,  // minimum height
+                    maxHeight: 800,  // maximum height
+                  ),
+                  child: Image.asset(
+                    'assets/images/SizeChart.jpg',
+                    fit: BoxFit.contain, // maintains aspect ratio within constraints
+                  ),
+                ),
               ),
 
             ],
