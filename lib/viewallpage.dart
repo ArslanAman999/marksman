@@ -83,16 +83,26 @@ class _viewallpageState extends State<viewallpage> {
                 final shoes = snapshot.data!;
                 return Padding(
                   padding: const EdgeInsets.all(8.0),
-                  child: GridView.builder(
-                    itemCount: shoes.length,
-                    gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                      crossAxisCount: 2,
-                      childAspectRatio: 2 / 3,
-                      crossAxisSpacing: 10,
-                      mainAxisSpacing: 10,
-                    ),
-                    itemBuilder: (context, index) {
-                      return Shoesgrid(shoes: shoes[index]);
+                  child: LayoutBuilder(
+                    builder: (context, constraints) {
+                      // Calculate how many columns based on screen width
+                      // Max widget width 220, so on wider screens show more columns
+                      int crossAxisCount = (constraints.maxWidth / 220).floor();
+                      // Minimum 2 columns, maximum 4
+                      crossAxisCount = crossAxisCount.clamp(2, 4);
+
+                      return GridView.builder(
+                        itemCount: shoes.length,
+                        gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                          crossAxisCount: crossAxisCount,
+                          childAspectRatio: 2 / 3,
+                          crossAxisSpacing: 10,
+                          mainAxisSpacing: 10,
+                        ),
+                        itemBuilder: (context, index) {
+                          return Shoesgrid(shoes: shoes[index]);
+                        },
+                      );
                     },
                   ),
                 );
